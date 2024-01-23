@@ -1,0 +1,69 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "MarkdownToHtml",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "MarkdownToHtml::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-MarkdownToHtml-Debug-bb0a2527da4dd4e3ed0a.json",
+					"name" : "MarkdownToHtml",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "handling::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-handling-Debug-924f0b50a2ef1e44ab4a.json",
+					"name" : "handling",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/rapha/Source/Repos/Aeldit/Mardown-to-html/out/build/x64-Debug",
+		"source" : "C:/Users/rapha/Source/Repos/Aeldit/Mardown-to-html"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}
