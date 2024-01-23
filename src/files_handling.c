@@ -1,7 +1,7 @@
 #include "files_handling.h"
 
-#include <malloc.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 struct file_content *init_file_content(void)
@@ -63,7 +63,6 @@ struct fc_control *read_file(char *path)
     FILE *f = fopen(path, "r");
     if (f == NULL)
     {
-        printf("%s", path);
         return NULL;
     }
 
@@ -79,10 +78,13 @@ struct fc_control *read_file(char *path)
         destroy_fc_control(fcc);
         return NULL;
     }
+    add_fc_to_fc_control(fcc, current_fc);
 
     int lines = 0;
     if (fseek(f, lines++, SEEK_SET) != 0)
     {
+        free(fcc);
+        free(current_fc);
         return NULL;
     }
 
@@ -115,7 +117,7 @@ struct fc_control *read_file(char *path)
         }
     }
     add_fc_to_fc_control(fcc, last_fc);
-    return NULL;
+    return fcc;
 }
 
 void print_file_content(struct fc_control *fcc)
@@ -125,9 +127,9 @@ void print_file_content(struct fc_control *fcc)
         return;
     }
 
-    printf("\n#===========================================================\n");
-    printf("# Printing the content of the file '%s'", fcc->file_name);
-    printf("\n#===========================================================\n");
+    printf("\n============================================================\n");
+    printf("  Printing the content of the file '%s'", fcc->file_name);
+    printf("\n============================================================\n");
     struct file_content *tmp = fcc->head;
     while (tmp != NULL)
     {
