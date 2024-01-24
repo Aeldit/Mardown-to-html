@@ -11,7 +11,7 @@ all: CFLAGS+=$(SANITIZE)
 all: md-to-html
 
 # Generates the binary file
-# $@ is the name of the rule (here, icmp-extractor)
+# $@ is the name of the rule (here, md-to-html)
 # $^ is the dependencies of the rule
 md-to-html: $(OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)

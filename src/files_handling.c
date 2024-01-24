@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct file_content *init_file_content(void)
+file_content_ts *init_file_content(void)
 {
-    struct file_content *fc = calloc(1, sizeof(struct file_content));
+    file_content_ts *fc = calloc(1, sizeof(file_content_ts));
     if (fc == NULL)
     {
         return NULL;
@@ -16,15 +16,15 @@ struct file_content *init_file_content(void)
     return fc;
 }
 
-struct fc_control *init_fc_control(char *file_name, size_t file_name_len)
+fc_control_ts *init_fc_control(char *file_name, size_t file_name_len)
 {
-    struct fc_control *fcc = calloc(1, sizeof(struct fc_control));
+    fc_control_ts *fcc = calloc(1, sizeof(fc_control_ts));
     if (fcc == NULL)
     {
         return NULL;
     }
 
-    struct file_content *fc = init_file_content();
+    file_content_ts *fc = init_file_content();
     if (fc == NULL)
     {
         free(fcc);
@@ -46,7 +46,7 @@ struct fc_control *init_fc_control(char *file_name, size_t file_name_len)
     return fcc;
 }
 
-void add_fc_to_fc_control(struct fc_control *fcc, struct file_content *fc)
+void add_fc_to_fc_control(fc_control_ts *fcc, file_content_ts *fc)
 {
     if (fcc == NULL || fc == NULL)
     {
@@ -58,7 +58,7 @@ void add_fc_to_fc_control(struct fc_control *fcc, struct file_content *fc)
     fcc->nb_buffers++;
 }
 
-struct fc_control *read_file(char *path)
+fc_control_ts *read_file(char *path)
 {
     FILE *f = fopen(path, "r");
     if (f == NULL)
@@ -66,13 +66,13 @@ struct fc_control *read_file(char *path)
         return NULL;
     }
 
-    struct fc_control *fcc = init_fc_control(path, strlen(path));
+    fc_control_ts *fcc = init_fc_control(path, strlen(path));
     if (fcc == NULL)
     {
         return NULL;
     }
 
-    struct file_content *current_fc = calloc(1, sizeof(struct file_content));
+    file_content_ts *current_fc = calloc(1, sizeof(file_content_ts));
     if (current_fc == NULL)
     {
         destroy_fc_control(fcc);
@@ -91,7 +91,7 @@ struct fc_control *read_file(char *path)
     char c;
     int buff_idx = 0;
     // last_fc is used to get the last read file_content (which is not full)
-    struct file_content *last_fc = NULL;
+    file_content_ts *last_fc = NULL;
     while ((c = fgetc(f)) != EOF)
     {
         if (fseek(f, lines++, SEEK_SET) != 0)
@@ -106,7 +106,7 @@ struct fc_control *read_file(char *path)
         else
         {
             add_fc_to_fc_control(fcc, current_fc);
-            struct file_content *new_fc = init_file_content();
+            file_content_ts *new_fc = init_file_content();
             if (new_fc == NULL)
             {
                 break;
@@ -120,7 +120,7 @@ struct fc_control *read_file(char *path)
     return fcc;
 }
 
-void print_file_content(struct fc_control *fcc)
+void print_file_content(fc_control_ts *fcc)
 {
     if (fcc == NULL)
     {
@@ -130,7 +130,7 @@ void print_file_content(struct fc_control *fcc)
     printf("\n============================================================\n");
     printf("  Printing the content of the file '%s'", fcc->file_name);
     printf("\n============================================================\n");
-    struct file_content *tmp = fcc->head;
+    file_content_ts *tmp = fcc->head;
     while (tmp != NULL)
     {
         printf("%s", tmp->buffer);
@@ -138,7 +138,7 @@ void print_file_content(struct fc_control *fcc)
     }
 }
 
-void destroy_fc_control(struct fc_control *fcc)
+void destroy_fc_control(fc_control_ts *fcc)
 {
     if (fcc == NULL)
     {
@@ -154,7 +154,7 @@ void destroy_fc_control(struct fc_control *fcc)
 
     while (fcc->head != NULL)
     {
-        struct file_content *tmp = fcc->head;
+        file_content_ts *tmp = fcc->head;
         fcc->head = fcc->head->next;
         free(tmp);
     }

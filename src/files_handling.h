@@ -5,24 +5,24 @@
 
 #define FILE_BUFF_SIZE 512
 
-struct file_content
+typedef struct file_content_ts
 {
     char buffer[FILE_BUFF_SIZE];
-    struct file_content *next;
-};
+    struct file_content_ts *next;
+} file_content_ts;
 
-struct fc_control
+typedef struct fc_control_ts
 {
     size_t nb_buffers;
     char *file_name;
-    struct file_content *head;
-    struct file_content *tail;
-};
+    file_content_ts *head;
+    file_content_ts *tail;
+} fc_control_ts;
 
-struct fc_control *read_file(char *path);
+fc_control_ts *read_file(char *path);
 
-void print_file_content(struct fc_control *fcc);
+void print_file_content(fc_control_ts *fcc);
 
-void destroy_fc_control(struct fc_control *fcc);
+void destroy_fc_control(fc_control_ts *fcc);
 
 #endif
