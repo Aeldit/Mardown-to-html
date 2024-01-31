@@ -2,8 +2,8 @@ CC=gcc
 CFLAGS=-std=c99 -pedantic -Werror -Wall -Wextra -Wvla -g
 SANITIZE=-fsanitize=address
 
-# Contains the C files to use for compilation
-CFILES=$(wildcard src/*.c)
+# Contains the C files used for compilation
+CFILES=$(wildcard src/*.c src/utils/*.c src/parsing/*.c)
 OBJ=$(CFILES:.c=.o)
 
 all: LDLIBS+=$(SANITIZE)
@@ -17,5 +17,5 @@ md-to-html: $(OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 clean:
-	rm -f src/*.o
+	rm -f src/*.o src/utils/*.o
 	rm md-to-html
