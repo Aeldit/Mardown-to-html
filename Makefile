@@ -17,5 +17,5 @@ md-to-html: $(OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 clean:
-	rm -f src/*.o src/utils/*.o
+	rm -rf src/*.o src/**/*.o
 	rm md-to-html
