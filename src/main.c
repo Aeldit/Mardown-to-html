@@ -26,7 +26,12 @@ int main(int argc, char *argv[])
     printf("%lu\n", nb_h[5]);
     free(nb_h);
 
-    print_file_content(fcc);
+    size_t *nb_deco = get_nb_text_decorations(fcc);
+    printf("%lu", nb_deco[0]);
+    printf("%lu", nb_deco[1]);
+    printf("%lu\n", nb_deco[2]);
+    free(nb_deco);
+
     destroy_fc_control(fcc);
     return 0;
 }

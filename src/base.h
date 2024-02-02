@@ -18,4 +18,6 @@
 */
 size_t *get_nb_headers(fc_control_ts *fcc);
 
+size_t *get_nb_text_decorations(fc_control_ts *fcc);
+
 #endif
