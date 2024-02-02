@@ -1,5 +1,5 @@
-#ifndef MDTH_BASE_H
-#define MDTH_BASE_H
+#ifndef COUNTING_BASE_H
+#define COUNTING_BASE_H
 
 /*******************************************************************************
 **                                  INCLUDES                                  **
