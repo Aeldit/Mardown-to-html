@@ -1,8 +1,4 @@
-# Markdown To Html
+# Markdown To HTML
 
-This is a program that generates a html file from a Markdown file
-
-## This is a second header
-
-### This is a third header
-
+The goal of this project is to give the program a Markdown file as input and
+transform it to HTML
