@@ -1,0 +1,21 @@
+#ifndef MDTH_BASE_H
+#define MDTH_BASE_H
+
+/*******************************************************************************
+**                                  INCLUDES                                  **
+*******************************************************************************/
+#include "files_handling.h"
+
+/*******************************************************************************
+**                                 FUNCTIONS                                  **
+*******************************************************************************/
+/**
+** \brief Counts the number of headers in the given file and returns it
+** \param fcc The fc_control structure associated with the file we want to
+**            translate
+** \returns An array of 6 int containing the number of each header
+**          The array is like so : [ nb_h1, nb_h2, nb_h3, nb_h4, nb_h5, nb_h6 ]
+*/
+size_t *get_nb_headers(fc_control_ts *fcc);
+
+#endif
