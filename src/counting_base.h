@@ -21,6 +21,12 @@ typedef struct str_contents_ts
     size_t *nb_char_each; // The number of characters in each of them
 } str_contents_ts;
 
+struct final_str_len
+{
+    size_t len;
+    str_contents_ts **strct_arr;
+};
+
 /*******************************************************************************
 **                                 FUNCTIONS                                  **
 *******************************************************************************/

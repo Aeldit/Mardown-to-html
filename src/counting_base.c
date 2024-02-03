@@ -95,12 +95,11 @@ char *destroy_on_fail(str_contents_ts **strct_arr, char *html_str)
     return NULL;
 }
 
-/*******************************************************************************
-**                                 FUNCTIONS                                  **
-*******************************************************************************/
-char *get_html_str(fc_control_ts *fcc)
+/**
+** \brief Calculs the total size of the html string
+*/
+struct final_str_len get_final_str_len(fc_control_ts *fcc)
 {
-    // Headers
     str_contents_ts **strct_arr = get_nb_chars_in_headers(fcc);
     // We initialize at 1 because of the end of string character ('\0')
     size_t html_parts_lenght = 1;
@@ -113,8 +112,19 @@ char *get_html_str(fc_control_ts *fcc)
             html_parts_lenght += strct_arr[i]->nb_char_each[a];
         }
     }
+    printf("headers total size : %lu\n", html_parts_lenght);
+    return (struct final_str_len){ .len = html_parts_lenght,
+                                   .strct_arr = strct_arr };
+}
 
-    printf("%lu\n", html_parts_lenght);
+/*******************************************************************************
+**                                 FUNCTIONS                                  **
+*******************************************************************************/
+char *get_html_str(fc_control_ts *fcc)
+{
+    struct final_str_len fsl = get_final_str_len(fcc);
+    size_t html_parts_lenght = fsl.len;
+    str_contents_ts **strct_arr = fsl.strct_arr;
 
     char *html_str = calloc(html_parts_lenght, sizeof(char *));
     if (html_str == NULL)
