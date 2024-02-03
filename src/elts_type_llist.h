@@ -26,6 +26,8 @@ typedef struct link_ctrl_ts
 /*******************************************************************************
 **                                 FUNCTIONS                                  **
 *******************************************************************************/
+link_ctrl_ts *init_llist();
+
 void add_elt(link_ctrl_ts *llc, unsigned type, char *contents,
              size_t contents_len);
 

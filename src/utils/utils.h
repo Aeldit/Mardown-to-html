@@ -3,4 +3,6 @@
 
 #define LEN_HEADER 9
 
+#define NB_HEADER 6
+
 #endif
