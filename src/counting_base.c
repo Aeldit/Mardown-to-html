@@ -61,12 +61,29 @@ str_contents_ts **init_str_contents_array(fc_control_ts *fcc)
             return NULL;
         }
     }
+    free(nb_h_each);
     return str_ctt_arr;
 }
 
-/*******************************************************************************
-**                                 FUNCTIONS                                  **
-*******************************************************************************/
+void destroy_str_contents_array(str_contents_ts **s)
+{
+    if (s == NULL)
+    {
+        return;
+    }
+
+    for (int i = 0; i < NB_HEADER; i++)
+    {
+        if (s[i] == NULL)
+        {
+            continue;
+        }
+        free(s[i]->nb_char_each);
+        free(s[i]);
+    }
+    free(s);
+}
+
 char *destroy_on_fail(str_contents_ts **strct_arr, char *html_str)
 {
     for (int i = 0; i < 6; i++)
@@ -78,18 +95,26 @@ char *destroy_on_fail(str_contents_ts **strct_arr, char *html_str)
     return NULL;
 }
 
+/*******************************************************************************
+**                                 FUNCTIONS                                  **
+*******************************************************************************/
 char *get_html_str(fc_control_ts *fcc)
 {
     // Headers
     str_contents_ts **strct_arr = get_nb_chars_in_headers(fcc);
-    size_t html_parts_lenght = 0;
+    // We initialize at 1 because of the end of string character ('\0')
+    size_t html_parts_lenght = 1;
 
     for (size_t i = 0; i < NB_HEADER; i++)
     {
-        for (int a = 0; a < strct_arr[i]->nb; a++)
+        // Iterates over all the <hx> elements (1 <= x <= 6)
+        for (size_t a = 0; a < strct_arr[i]->nb; a++)
         {
+            html_parts_lenght += strct_arr[i]->nb_char_each[a];
         }
     }
+
+    printf("%lu\n", html_parts_lenght);
 
     char *html_str = calloc(html_parts_lenght, sizeof(char *));
     if (html_str == NULL)
@@ -113,7 +138,8 @@ char *get_html_str(fc_control_ts *fcc)
         }
     }
 
-    free(strct_arr);
+    free(llc);
+    destroy_str_contents_array(strct_arr);
     return html_str;
 }
 
@@ -216,9 +242,6 @@ str_contents_ts **get_nb_chars_in_headers(fc_control_ts *fcc)
                     strct_arr[h_level]->nb_char_each[indexes[h_level]] =
                         current_nb_char;
                     indexes[h_level]++;
-                    printf(
-                        "%lu\n",
-                        strct_arr[h_level]->nb_char_each[indexes[h_level] - 1]);
                 }
                 h_level = -1;
                 current_nb_char = 0;

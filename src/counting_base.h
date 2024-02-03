@@ -35,6 +35,12 @@ char *get_html_str(fc_control_ts *fcc);
 */
 size_t *get_nb_headers(fc_control_ts *fcc);
 
+/**
+** \brief Counts the number of characters that each header element contains
+**        (ex: "### Testing" has 7 characters)
+** \returns An array of 6 str_contents_ts structures each containing the number
+**          of character contained by head header element
+*/
 str_contents_ts **get_nb_chars_in_headers(fc_control_ts *fcc);
 
 size_t *get_nb_text_decorations(fc_control_ts *fcc);
