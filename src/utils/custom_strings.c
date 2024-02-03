@@ -160,11 +160,7 @@ void destroy_splited_string(splited_string_ts *sps)
     free(sps);
 }
 
-/**
-** Copy every character from s into dest starting at index dest_idx
-** dest will always have enough space in memory to accept s
-*/
-void string_append(char *dest, char *s, unsigned dest_idx)
+void string_append(char *dest, char *s, size_t dest_idx)
 {
     if (dest == NULL || s == NULL)
     {

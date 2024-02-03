@@ -2,13 +2,15 @@
 #define COUNTING_BASE_H
 
 /*******************************************************************************
-**                                  INCLUDES                                  **
+**                                  includes                                  **
 *******************************************************************************/
 #include "files_handling.h"
 
 /*******************************************************************************
 **                                 FUNCTIONS                                  **
 *******************************************************************************/
+char *get_html_str(fc_control_ts *fcc);
+
 /**
 ** \brief Counts the number of headers in the given file and returns it
 ** \param fcc The fc_control structure associated with the file we want to

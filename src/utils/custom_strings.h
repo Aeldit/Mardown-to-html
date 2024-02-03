@@ -2,6 +2,11 @@
 #define CUSTOM_STRINGS_H
 
 /*******************************************************************************
+**                                  INCLUDES                                  **
+*******************************************************************************/
+#include <stddef.h>
+
+/*******************************************************************************
 **                                 STRUCTURES                                 **
 *******************************************************************************/
 /**
@@ -56,9 +61,9 @@ void destroy_splited_string(splited_string_ts *sps);
 void print_splited_string(splited_string_ts *sps);
 
 /**
-** \brief Appends the string s starting at the index 'dest_idx' to the string
-**        dest
+** Copy every character from s into dest starting at index dest_idx
+** dest will always have enough space in memory to accept s
 */
-void string_append(char *dest, char *s, unsigned dest_idx);
+void string_append(char *dest, char *s, size_t dest_idx);
 
 #endif // !CUSTOM_STRINGS_H

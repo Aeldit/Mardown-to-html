@@ -6,9 +6,43 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "utils/custom_strings.h"
+#include "utils/utils.h"
+
 /*******************************************************************************
 **                                 FUNCTIONS                                  **
 *******************************************************************************/
+char *get_html_str(fc_control_ts *fcc)
+{
+    size_t *nb_h = get_nb_headers(fcc);
+    size_t html_parts_lenght =
+        9 * (nb_h[0] + nb_h[1] + nb_h[2] + nb_h[3] + nb_h[4] + nb_h[5]) + 1;
+
+    printf("str len : %lu\n", html_parts_lenght);
+
+    char *html_str = calloc(html_parts_lenght, sizeof(char *));
+    if (html_str == NULL)
+    {
+        free(nb_h);
+        return NULL;
+    }
+
+    size_t idx = 0;
+    for (int i = 0; i < 6; i++)
+    {
+        for (size_t j = 0; j < nb_h[i]; j++)
+        {
+            char tmp[10];
+            sprintf(tmp, "<h%d></h%d>", i + 1, i + 1);
+            string_append(html_str, tmp, idx);
+            idx += LEN_HEADER;
+        }
+    }
+
+    free(nb_h);
+    return html_str;
+}
+
 size_t *get_nb_headers(fc_control_ts *fcc)
 {
     // Contains the number of header for each possible category (h1 to h6)

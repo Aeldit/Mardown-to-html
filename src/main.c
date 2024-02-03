@@ -17,7 +17,11 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    size_t *nb_h = get_nb_headers(fcc);
+    char *html_str = get_html_str(fcc);
+    printf("%s\n", html_str);
+    free(html_str);
+
+    /*size_t *nb_h = get_nb_headers(fcc);
     printf("%lu", nb_h[0]);
     printf("%lu", nb_h[1]);
     printf("%lu", nb_h[2]);
@@ -30,7 +34,7 @@ int main(int argc, char *argv[])
     printf("%lu", nb_deco[0]);
     printf("%lu", nb_deco[1]);
     printf("%lu\n", nb_deco[2]);
-    free(nb_deco);
+    free(nb_deco);*/
 
     destroy_fc_control(fcc);
     return 0;
