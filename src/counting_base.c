@@ -11,52 +11,109 @@
 #include "utils/utils.h"
 
 /*******************************************************************************
+**                              LOCAL FUNCTIONS                               **
+*******************************************************************************/
+str_contents_ts **init_str_contents_array(fc_control_ts *fcc)
+{
+    // Contains the number of header for each category (h1 to h6), and the
+    // number of character contained by each of them
+    str_contents_ts **str_ctt_arr =
+        calloc(NB_HEADER, sizeof(str_contents_ts *));
+    if (str_ctt_arr == NULL)
+    {
+        return NULL;
+    }
+
+    // Allocates the six structures inside of the 'nb_char_each' array
+    for (int i = 0; i < NB_HEADER; i++)
+    {
+        str_ctt_arr[i] = calloc(1, sizeof(str_contents_ts));
+        if (str_ctt_arr[i] == NULL)
+        {
+            for (int j = j; j >= 0; j--)
+            {
+                free(str_ctt_arr[j]);
+            }
+            free(str_ctt_arr);
+            return NULL;
+        }
+    }
+
+    size_t *nb_h_each = get_nb_headers(fcc);
+    if (nb_h_each == NULL)
+    {
+        free(str_ctt_arr);
+        return NULL;
+    }
+
+    for (int i = 0; i < NB_HEADER; i++)
+    {
+        str_ctt_arr[i]->nb = nb_h_each[i];
+        str_ctt_arr[i]->nb_char_each = calloc(nb_h_each[i], sizeof(size_t));
+        if (str_ctt_arr[i]->nb_char_each == NULL)
+        {
+            // Frees the previously allocated arrays if the current one fails to
+            // do so
+            for (int j = i; j >= 0; j--)
+            {
+                free(str_ctt_arr[i]->nb_char_each);
+            }
+            return NULL;
+        }
+    }
+    return str_ctt_arr;
+}
+
+/*******************************************************************************
 **                                 FUNCTIONS                                  **
 *******************************************************************************/
-char *destroy_on_fail(str_contents_ts *nb_h, char *html_str)
+char *destroy_on_fail(str_contents_ts **strct_arr, char *html_str)
 {
     for (int i = 0; i < 6; i++)
     {
-        free(nb_h[i].nb_char_each);
+        free(strct_arr[i]->nb_char_each);
     }
-    free(nb_h);
+    free(strct_arr);
     free(html_str);
     return NULL;
 }
 
 char *get_html_str(fc_control_ts *fcc)
 {
-    str_contents_ts *nb_h = get_nb_chars_in_headers(fcc);
-    size_t html_parts_lenght = 9
-            * (nb_h[0].nb + nb_h[1].nb + nb_h[2].nb + nb_h[3].nb + nb_h[4].nb
-               + nb_h[5].nb)
-        + 1;
+    // Headers
+    str_contents_ts **strct_arr = get_nb_chars_in_headers(fcc);
+    size_t html_parts_lenght = 0;
+
+    for (size_t i = 0; i < NB_HEADER; i++)
+    {
+        for (int a = 0; a < strct_arr[i]->nb; a++)
+        {
+        }
+    }
 
     char *html_str = calloc(html_parts_lenght, sizeof(char *));
     if (html_str == NULL)
     {
-        return destroy_on_fail(nb_h, NULL);
+        return destroy_on_fail(strct_arr, NULL);
     }
 
     link_ctrl_ts *llc = init_llist();
     if (llc == NULL)
     {
-        return destroy_on_fail(nb_h, html_str);
+        return destroy_on_fail(strct_arr, html_str);
     }
 
     size_t idx = 0;
     for (int i = 0; i < NB_HEADER; i++)
     {
-        for (size_t j = 0; j < nb_h[i].nb; j++)
+        for (size_t j = 0; j < strct_arr[i]->nb; j++)
         {
-            char tmp[10];
-            sprintf(tmp, "<h%d></h%d>", i + 1, i + 1);
-            string_append(html_str, tmp, idx);
+            string_append(html_str, "", idx);
             idx += LEN_HEADER;
         }
     }
 
-    free(nb_h);
+    free(strct_arr);
     return html_str;
 }
 
@@ -113,35 +170,23 @@ size_t *get_nb_headers(fc_control_ts *fcc)
     return nb_h_each;
 }
 
-str_contents_ts *get_nb_chars_in_headers(fc_control_ts *fcc)
+str_contents_ts **get_nb_chars_in_headers(fc_control_ts *fcc)
 {
-    // Contains the number of header for each possible category (h1 to h6)
-    str_contents_ts *nb_char_each = calloc(NB_HEADER, sizeof(str_contents_ts));
-    if (nb_char_each == NULL)
+    str_contents_ts **strct_arr = init_str_contents_array(fcc);
+    if (strct_arr == NULL)
     {
         return NULL;
     }
 
-    size_t *nb_h_each = get_nb_headers(fcc);
-    if (nb_h_each == NULL)
-    {
-        free(nb_char_each);
-        return NULL;
-    }
-
-    for (int i = 0; i < NB_HEADER; i++)
-    {
-        nb_char_each[i].nb = nb_h_each[i];
-    }
-
-    // Can be 0 (no header), 1, 2, 3, 4, 5 or 6
-    int h_level = 0;
+    // Can be -1 (no header), 0, 1, 2, 3, 4 or 5
+    int h_level = -1;
     char prev_c = '\0';
+    char is_in_header = 0;
     // Contains the number of non-element chars in the current element
     // (ex: '### This is a header' contains 16 characters)
     size_t current_nb_char = 0;
     // Contains the current index of the nb_char_each field
-    int indexes[NB_HEADER] = { 0 };
+    size_t indexes[NB_HEADER] = { 0 };
     file_content_ts *current_fc = fcc->head;
 
     for (size_t i = 0; i < fcc->nb_buffers; i++)
@@ -153,27 +198,36 @@ str_contents_ts *get_nb_chars_in_headers(fc_control_ts *fcc)
             // Start of a header
             if ((prev_c == '\n' || prev_c == '\0') && buff[idx] == '#')
             {
-                h_level = 1;
+                h_level = 0;
             }
             // Gets the number of '#' that are for the same header
-            else if (h_level > 0 && buff[idx] == '#')
+            else if (h_level != -1 && buff[idx] == '#')
             {
                 h_level++;
             }
             // When the header stops
-            else if (h_level > 0 && buff[idx] != '#')
+            else if (h_level != -1 && prev_c == '#' && buff[idx] == ' ')
             {
+                is_in_header = 1;
                 // If the header has between 1 and 6 '#', we add it to the list
                 // of headers
-                if (1 <= h_level && h_level <= 6)
+                if (0 <= h_level && h_level <= 5)
                 {
-                    nb_char_each[h_level - 1]
-                        .nb_char_each[indexes[h_level - 1]++] = current_nb_char;
+                    strct_arr[h_level]->nb_char_each[indexes[h_level]] =
+                        current_nb_char;
+                    indexes[h_level]++;
+                    printf(
+                        "%lu\n",
+                        strct_arr[h_level]->nb_char_each[indexes[h_level] - 1]);
                 }
-                h_level = 0;
+                h_level = -1;
                 current_nb_char = 0;
             }
-            else
+            else if (is_in_header && buff[idx] == '\n')
+            {
+                is_in_header = 0;
+            }
+            else if (is_in_header)
             {
                 current_nb_char++;
             }
@@ -186,7 +240,7 @@ str_contents_ts *get_nb_chars_in_headers(fc_control_ts *fcc)
         }
         current_fc = current_fc->next;
     }
-    return nb_char_each;
+    return strct_arr;
 }
 
 size_t *get_nb_text_decorations(fc_control_ts *fcc)
