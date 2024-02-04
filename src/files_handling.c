@@ -14,8 +14,8 @@
 *******************************************************************************/
 int destroy_read_file(FILE *in_f, FILE *out_f, int failure)
 {
-    free(in_f);
-    free(out_f);
+    fclose(in_f);
+    fclose(out_f);
     return failure;
 }
 
@@ -31,6 +31,7 @@ int read_file(char *path)
     char *new_path = replace_extension(path, "md", "html");
     if (new_path == NULL)
     {
+        free(new_path);
         return destroy_read_file(in_f, NULL, 1);
     }
     else
