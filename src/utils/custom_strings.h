@@ -66,4 +66,6 @@ void print_splited_string(splited_string_ts *sps);
 */
 void string_append(char *dest, char *s, size_t dest_idx);
 
+char *replace_extension(char *s, char *ext, char *new_ext);
+
 #endif // !CUSTOM_STRINGS_H

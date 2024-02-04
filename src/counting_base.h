@@ -49,6 +49,8 @@ size_t *get_nb_headers(fc_control_ts *fcc);
 */
 str_contents_ts **get_nb_chars_in_headers(fc_control_ts *fcc);
 
+void get_headers_contents(fc_control_ts *fcc, str_contents_ts **strct_arr);
+
 size_t *get_nb_text_decorations(fc_control_ts *fcc);
 
 #endif

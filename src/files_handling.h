@@ -44,7 +44,7 @@ typedef struct fc_control_ts
 **        and stores its content in a linked list of the structure file_content
 ** \returns The head of the file_content structure
 */
-fc_control_ts *read_file(char *path);
+int read_file(char *path);
 
 void print_file_content(fc_control_ts *fcc);
 

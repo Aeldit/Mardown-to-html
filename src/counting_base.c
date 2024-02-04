@@ -162,10 +162,10 @@ size_t *get_nb_headers(fc_control_ts *fcc)
         return NULL;
     }
 
-    // Can be 0 (no header), 1, 2, 3, 4, 5 or 6
-    int h_level = 0;
-    file_content_ts *current_fc = fcc->head;
+    // Can be -1 (no header), 0, 1, 2, 3, 4 or 5
+    int h_level = -1;
     char prev_c = '\0';
+    file_content_ts *current_fc = fcc->head;
 
     for (size_t i = 0; i < fcc->nb_buffers; i++)
     {
@@ -176,23 +176,23 @@ size_t *get_nb_headers(fc_control_ts *fcc)
             // Start of a header
             if ((prev_c == '\n' || prev_c == '\0') && buff[idx] == '#')
             {
-                h_level = 1;
+                h_level = 0;
             }
             // Gets the number of '#' that are for the same header
-            else if (h_level > 0 && buff[idx] == '#')
+            else if (h_level != -1 && buff[idx] == '#')
             {
                 h_level++;
             }
             // When the header stops
-            else if (h_level > 0 && buff[idx] != '#')
+            else if (h_level != -1 && buff[idx] != '#')
             {
                 // If the header has between 1 and 6 '#', we add it to the list
                 // of headers
-                if (1 <= h_level && h_level <= 6)
+                if (0 <= h_level && h_level <= 5)
                 {
-                    nb_h_each[h_level - 1]++;
+                    nb_h_each[h_level]++;
                 }
-                h_level = 0;
+                h_level = -1;
             }
             prev_c = buff[idx];
         }
@@ -274,6 +274,69 @@ str_contents_ts **get_nb_chars_in_headers(fc_control_ts *fcc)
         current_fc = current_fc->next;
     }
     return strct_arr;
+}
+
+void get_headers_contents(fc_control_ts *fcc, str_contents_ts **strct_arr)
+{
+    // Can be -1 (no header), 0, 1, 2, 3, 4 or 5
+    int h_level = -1;
+    char prev_c = '\0';
+    char is_in_header = 0;
+    // Contains the number of non-element chars in the current element
+    // (ex: '### This is a header' contains 16 characters)
+    size_t current_nb_char = 0;
+    // Contains the current index of the nb_char_each field
+    size_t indexes[NB_HEADER] = { 0 };
+    file_content_ts *current_fc = fcc->head;
+
+    for (size_t i = 0; i < fcc->nb_buffers; i++)
+    {
+        char *buff = current_fc->buffer;
+
+        for (size_t idx = 0; idx < FILE_BUFF_SIZE; idx++)
+        {
+            // Start of a header
+            if ((prev_c == '\n' || prev_c == '\0') && buff[idx] == '#')
+            {
+                h_level = 0;
+            }
+            // Gets the number of '#' that are for the same header
+            else if (h_level != -1 && buff[idx] == '#')
+            {
+                h_level++;
+            }
+            // When the header stops
+            else if (h_level != -1 && prev_c == '#' && buff[idx] == ' ')
+            {
+                is_in_header = 1;
+                // If the header has between 1 and 6 '#', we add it to the list
+                // of headers
+                if (0 <= h_level && h_level <= 5)
+                {
+                    strct_arr[h_level]->nb_char_each[indexes[h_level]] =
+                        current_nb_char;
+                    indexes[h_level]++;
+                }
+                h_level = -1;
+                current_nb_char = 0;
+            }
+            else if (is_in_header && buff[idx] == '\n')
+            {
+                is_in_header = 0;
+            }
+            else if (is_in_header)
+            {
+                current_nb_char++;
+            }
+            prev_c = buff[idx];
+        }
+
+        if (current_fc->next == NULL)
+        {
+            break;
+        }
+        current_fc = current_fc->next;
+    }
 }
 
 size_t *get_nb_text_decorations(fc_control_ts *fcc)

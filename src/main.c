@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "counting_base.h"
 #include "files_handling.h"
 
 int main(int argc, char *argv[])
@@ -11,15 +7,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    fc_control_ts *fcc = read_file(argv[1]);
-    if (fcc == NULL)
-    {
-        return 1;
-    }
-
-    char *html_str = get_html_str(fcc);
-    printf("%s\n", html_str);
-    free(html_str);
+    read_file(argv[1]);
 
     /*size_t *nb_h = get_nb_headers(fcc);
     printf("%lu", nb_h[0]);
@@ -36,6 +24,5 @@ int main(int argc, char *argv[])
     printf("%lu\n", nb_deco[2]);
     free(nb_deco);*/
 
-    destroy_fc_control(fcc);
     return 0;
 }
