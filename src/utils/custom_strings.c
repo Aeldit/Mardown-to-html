@@ -202,10 +202,11 @@ char *replace_extension(char *s, char *ext, char *new_ext)
     }
 
     memcpy(new_string, s, len_s - len_ext);
-    printf("%s\n", new_string);
 
-    for (size_t i = len_s - len_ext; i < final_len; i++)
+    size_t idx = 0;
+    for (size_t i = len_s - len_ext; i < final_len; i++, idx++)
     {
+        new_string[i] = new_ext[idx];
     }
     return new_string;
 }

@@ -27,17 +27,13 @@ int read_file(char *path)
         return 1;
     }
 
-    FILE *out_f;
     char *new_path = replace_extension(path, "md", "html");
     if (new_path == NULL)
     {
         free(new_path);
         return destroy_read_file(in_f, NULL, 1);
     }
-    else
-    {
-        out_f = fopen(new_path, "w");
-    }
+    FILE *out_f = fopen(new_path, "w");
     free(new_path);
 
     if (out_f == NULL)
