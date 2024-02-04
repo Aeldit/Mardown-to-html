@@ -4,13 +4,9 @@
 /*******************************************************************************
 **                                  INCLUDES                                  **
 *******************************************************************************/
-#include "files_handling.h"
+#include <stddef.h>
 
-/*******************************************************************************
-**                              DEFINES / MACROS                              **
-*******************************************************************************/
-// 'n' is the 'nb_char_each' filed of the str_contents_ts structure
-#define GET_H_ELTS_SIZE(n) ()
+#include "files_handling.h"
 
 /*******************************************************************************
 **                                 STRUCTURES                                 **
@@ -30,7 +26,7 @@ struct final_str_len
 /*******************************************************************************
 **                                 FUNCTIONS                                  **
 *******************************************************************************/
-char *get_html_str(fc_control_ts *fcc);
+char *get_html_str(void);
 
 /**
 ** \brief Counts the number of headers in the given file and returns it
@@ -39,7 +35,7 @@ char *get_html_str(fc_control_ts *fcc);
 ** \returns An array of 6 int containing the number of each header
 **          The array is like so : [ nb_h1, nb_h2, nb_h3, nb_h4, nb_h5, nb_h6 ]
 */
-size_t *get_nb_headers(fc_control_ts *fcc);
+size_t *get_nb_headers(void);
 
 /**
 ** \brief Counts the number of characters that each header element contains
@@ -47,10 +43,8 @@ size_t *get_nb_headers(fc_control_ts *fcc);
 ** \returns An array of 6 str_contents_ts structures each containing the number
 **          of character contained by head header element
 */
-str_contents_ts **get_nb_chars_in_headers(fc_control_ts *fcc);
+str_contents_ts **get_nb_chars_in_headers(void);
 
-void get_headers_contents(fc_control_ts *fcc, str_contents_ts **strct_arr);
-
-size_t *get_nb_text_decorations(fc_control_ts *fcc);
+void get_headers_contents(str_contents_ts **strct_arr);
 
 #endif

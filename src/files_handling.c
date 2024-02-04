@@ -10,7 +10,7 @@
 #include "utils/custom_strings.h"
 
 /*******************************************************************************
-**                                 FUNCTIONS                                  **
+**                              LOCAL FUNCTIONS                               **
 *******************************************************************************/
 int destroy_read_file(FILE *in_f, FILE *out_f, int failure)
 {
@@ -19,6 +19,9 @@ int destroy_read_file(FILE *in_f, FILE *out_f, int failure)
     return failure;
 }
 
+/*******************************************************************************
+**                                 FUNCTIONS                                  **
+*******************************************************************************/
 int read_file(char *path)
 {
     FILE *in_f = fopen(path, "r");
