@@ -53,7 +53,6 @@ int read_file(char *path)
     char c;
     int buff_idx = 0;
     char buff[BUFF_SIZE] = "";
-    char html_buff[BUFF_SIZE] = "";
 
     // Stores the element we where in before writing the preivous buffer
     int last_lement = NO_ELT;
@@ -67,8 +66,7 @@ int read_file(char *path)
         // When the buffer is full, we write it to the file
         if (buff_idx == BUFF_SIZE - 1)
         {
-            translate_to_html(buff, html_buff, last_lement);
-            fprintf(out_f, html_buff, NULL);
+            translate_write_to_html(buff, last_lement, out_f);
             buff_idx = 0;
         }
         else

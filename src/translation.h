@@ -5,6 +5,7 @@
 **                                  INCLUDES                                  **
 *******************************************************************************/
 #include <stddef.h>
+#include <stdio.h>
 
 #include "utils/utils.h"
 
@@ -22,7 +23,7 @@
 /*******************************************************************************
 **                                 FUNCTIONS                                  **
 *******************************************************************************/
-void translate_to_html(char buff[BUFF_SIZE], char dest_buff[BUFF_SIZE],
-                       enum ELEMENTS elt);
+void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
+                             FILE *out_f);
 
 #endif
