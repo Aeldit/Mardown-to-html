@@ -5,9 +5,10 @@
 *******************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
+#include "translation.h"
 #include "utils/custom_strings.h"
+#include "utils/utils.h"
 
 /*******************************************************************************
 **                              LOCAL FUNCTIONS                               **
@@ -38,7 +39,6 @@ int read_file(char *path)
     }
     FILE *out_f = fopen(new_path, "w");
     free(new_path);
-
     if (out_f == NULL)
     {
         return destroy_read_file(in_f, NULL, 1);
@@ -52,7 +52,11 @@ int read_file(char *path)
 
     char c;
     int buff_idx = 0;
-    char buff[FILE_BUFF_SIZE] = "";
+    char buff[BUFF_SIZE] = "";
+    char html_buff[BUFF_SIZE] = "";
+
+    // Stores the element we where in before writing the preivous buffer
+    int last_lement = NO_ELT;
     while ((c = fgetc(in_f)) != EOF)
     {
         if (fseek(in_f, lines, SEEK_SET) != 0)
@@ -61,9 +65,10 @@ int read_file(char *path)
         }
 
         // When the buffer is full, we write it to the file
-        if (buff_idx == FILE_BUFF_SIZE - 1)
+        if (buff_idx == BUFF_SIZE - 1)
         {
-            fprintf(out_f, buff, NULL);
+            translate_to_html(buff, html_buff, last_lement);
+            fprintf(out_f, html_buff, NULL);
             buff_idx = 0;
         }
         else
