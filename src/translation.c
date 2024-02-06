@@ -107,8 +107,6 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
         }
         else
         {
-            // TODO -> Allocate more memory because the html element contain
-            // more text
             html_buff[dest_buff_idx++] = buff[i];
         }
         prev_c = buff[i];
