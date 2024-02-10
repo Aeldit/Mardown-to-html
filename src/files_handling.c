@@ -75,6 +75,7 @@ int read_file(char *path)
         }
         lines++;
     }
+
     if (buff_idx > 0)
     {
         translate_write_to_html(buff, last_lement, out_f);
