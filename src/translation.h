@@ -32,10 +32,32 @@
     ((elt) == (H1) || (elt) == (H2) || (elt) == (H3) || (elt) == (H4)          \
      || (elt) == (H5) || (elt) == (H6))
 
+// 'elt' must be a member of the ELEMENTS enum
+#define IS_IN_DECO(elt)                                                        \
+    (((elt) == BOLD) || ((elt) == ITALIC) || ((elt) == INLINE_CODE))
+
 // Obtains the total number of chars from the text decorations
+// 'deco' is a decorations_ts structure
 #define GET_NB_CHAR_FROM_DECOS(deco)                                           \
     (((deco.nb_bold) * (LEN_BOLD)) + ((deco.nb_italic) * (LEN_ITALIC))         \
      + ((deco.nb_inline_code) * (LEN_INLINE_CODE)))
+
+/*******************************************************************************
+**                                   ENUMS                                    **
+*******************************************************************************/
+enum ELEMENTS
+{
+    NO_ELT,
+    H1,
+    H2,
+    H3,
+    H4,
+    H5,
+    H6,
+    BOLD,
+    ITALIC,
+    INLINE_CODE,
+};
 
 /*******************************************************************************
 **                                 STRUCTURES                                 **

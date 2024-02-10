@@ -102,6 +102,10 @@ decorations_ts get_nb_decorations(char buff[BUFF_SIZE])
             }
         }
     }
+    res.nb_bold /= 2;
+    res.nb_italic /= 2;
+    printf("%s\n-------------------------------%lu %lu %lu\n", buff,
+           res.nb_bold, res.nb_italic, res.nb_inline_code);
     return res;
 }
 
@@ -111,31 +115,37 @@ decorations_ts get_nb_decorations(char buff[BUFF_SIZE])
 void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
                              FILE *out_f)
 {
-    // Can be -1 (no header), 0, 1, 2, 3, 4 or 5
+    // TODO -> Use a structure of structures to store the number of stars from a
+    // buffer to another Can be -1 (no header), 0, 1, 2, 3, 4 or 5
     int h_level = -1;
     char prev_c = '\0';
     char is_in_header = IS_IN_HEADER(elt);
+    char is_in_deco = IS_IN_DECO(elt);
     int dest_buff_idx = 0;
+
+    decorations_ts nb_deco = get_nb_decorations(buff);
 
     // 5 is because we may have started a header in the previous buffer
     // and 9 * because a header element contains 9 characters in total in html
-    char *html_buff = calloc(
-        5 + LEN_HEADER * get_nb_headers(buff)
-            + GET_NB_CHAR_FROM_DECOS(get_nb_decorations(buff)) + BUFF_SIZE,
-        sizeof(char *));
+    char *html_buff = calloc(5 + LEN_HEADER * get_nb_headers(buff)
+                                 + GET_NB_CHAR_FROM_DECOS(nb_deco) + BUFF_SIZE,
+                             sizeof(char *));
 
     for (size_t i = 0; i < BUFF_SIZE; i++)
     {
         // TODO -> use a function that returns the current element
-        // Start of a header
-        if ((prev_c == '\n' || prev_c == '\0') && buff[i] == '#')
+        if (buff[i] == '#')
         {
-            h_level = 0;
-        }
-        // Gets the number of '#' that are for the same header
-        else if (h_level != -1 && buff[i] == '#')
-        {
-            h_level++;
+            // Start of a header
+            if (prev_c == '\0' || prev_c == '\n' || h_level == -1)
+            {
+                h_level = 0;
+            }
+            // Gets the number of '#' that are for the same header
+            else
+            {
+                h_level++;
+            }
         }
         // When the header stops
         else if (h_level != -1 && buff[i] == ' ' && !is_in_header)
@@ -163,6 +173,9 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
             {
                 html_buff[dest_buff_idx++] = buff[i];
             }
+        }
+        else if (is_in_deco)
+        {
         }
         else
         {
