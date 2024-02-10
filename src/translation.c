@@ -116,30 +116,6 @@ decorations_ts get_nb_decorations(char buff[BUFF_SIZE])
     return res;
 }
 
-void write_bold(char *html_buff, int *dest_buff_idx, char *is_in_bold)
-{
-    int idx = *dest_buff_idx;
-    // End
-    if (*is_in_bold)
-    {
-        *is_in_bold = 0;
-        for (size_t i = 0; i < NB_C_SPAN_CODE_END; i++)
-        {
-            html_buff[idx++] = elements[IDX_BOLD][1][i];
-        }
-    }
-    // Start
-    else
-    {
-        *is_in_bold = 1;
-        for (size_t i = 0; i < NB_C_BOLD_START; i++)
-        {
-            html_buff[idx++] = elements[IDX_BOLD][0][i];
-        }
-    }
-    *dest_buff_idx += idx;
-}
-
 /*******************************************************************************
 **                                 FUNCTIONS                                  **
 *******************************************************************************/
@@ -153,12 +129,13 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
     char is_in_header = IS_IN_HEADER(elt);
     char is_in_bold = elt == BOLD;
     char is_in_italic = elt == ITALIC;
-    int dest_buff_idx = 0;
+    int html_idx = 0;
 
     // 0 => None | 1 => bold | 2 => italic | 3 => code
     // See the 'TYPE_...' defines in the header
     char current_deco_type = 0;
     size_t nb_stars = 0;
+    size_t nb_stars_end = 0;
 
     decorations_ts nb_deco = get_nb_decorations(buff);
 
@@ -193,7 +170,7 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
             // Adds the '<hx>' element start to the dest_buff
             for (int j = 0; j < NB_C_H_START; j++)
             {
-                html_buff[dest_buff_idx++] = elements[h_level][0][j];
+                html_buff[html_idx++] = elements[h_level][0][j];
             }
         }
         else if (is_in_header)
@@ -203,14 +180,14 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
                 // Adds the '</hx>' element end to the dest_buff
                 for (int j = 0; j < NB_C_H_END; j++)
                 {
-                    html_buff[dest_buff_idx++] = elements[h_level][1][j];
+                    html_buff[html_idx++] = elements[h_level][1][j];
                 }
                 h_level = -1;
                 is_in_header = 0;
             }
             else
             {
-                html_buff[dest_buff_idx++] = buff[i];
+                html_buff[html_idx++] = buff[i];
             }
         }
         //======================================================================
@@ -218,104 +195,83 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
         //======================================================================
         else if (buff[i] == '*')
         {
-            nb_stars += is_in_bold || is_in_italic ? -1 : 1;
+            nb_stars++;
         }
         // Even number of stars => 1 bold
         // Odd number of stars < 2 => 1 italic
-        // Odd number of stars > 2 => 1 bold & 1 italilc
+        // Odd number of stars > 2 => 1 bold & 1 italic
+        //
+        // Writes the element start
         else if (nb_stars != 0)
         {
             // Bold
             if (nb_stars % 2 == 0)
             {
-                write_bold(html_buff, &dest_buff_idx, &is_in_bold);
-                // End
-                /*if (is_in_bold)
+                is_in_bold = 1;
+                for (size_t i = 0; i < NB_C_BOLD_START; i++)
                 {
-                    is_in_bold = 0;
-                    for (size_t i = 0; i < NB_C_SPAN_CODE_END; i++)
-                    {
-                        html_buff[dest_buff_idx++] = elements[IDX_BOLD][1][i];
-                    }
+                    html_buff[html_idx++] = elements[IDX_BOLD][0][i];
                 }
-                // Start
-                else
-                {
-                    is_in_bold = 1;
-                    for (size_t i = 0; i < NB_C_BOLD_START; i++)
-                    {
-                        html_buff[dest_buff_idx++] = elements[IDX_BOLD][0][i];
-                    }
-                }*/
             }
             // Italic
             else
             {
-                if (is_in_italic)
+                for (size_t i = 0; i < NB_C_ITALIC_START; i++)
                 {
-                    is_in_italic = 0;
+                    html_buff[html_idx++] = elements[IDX_ITALIC][0][i];
+                }
+                is_in_italic = 1;
+
+                if (nb_stars > 2)
+                {
                     for (size_t i = 0; i < NB_C_SPAN_CODE_END; i++)
                     {
-                        html_buff[dest_buff_idx++] = elements[IDX_ITALIC][1][i];
+                        html_buff[html_idx++] = elements[IDX_BOLD][1][i];
                     }
-                    // + bold
-                    if (nb_stars > 2)
+                    is_in_bold = 1;
+                }
+            }
+            nb_stars_end = nb_stars;
+            nb_stars = 0;
+        }
+        // Writes the element end
+        else if ((is_in_bold || is_in_italic) && nb_stars == 0)
+        {
+            if (buff[i] == '*')
+            {
+                // Bold end
+                if (nb_stars_end % 2 == 0)
+                {
+                    for (size_t i = 0; i < NB_C_SPAN_CODE_END; i++)
                     {
-                        // End
-                        if (is_in_bold)
-                        {
-                            is_in_bold = 0;
-                            for (size_t i = 0; i < NB_C_SPAN_CODE_END; i++)
-                            {
-                                html_buff[dest_buff_idx++] =
-                                    elements[IDX_BOLD][1][i];
-                            }
-                        }
-                        // Start
-                        else
-                        {
-                            is_in_bold = 1;
-                            for (size_t i = 0; i < NB_C_BOLD_START; i++)
-                            {
-                                html_buff[dest_buff_idx++] =
-                                    elements[IDX_BOLD][0][i];
-                            }
-                        }
+                        html_buff[html_idx++] = elements[IDX_BOLD][1][i];
                     }
+                    is_in_bold = 0;
+                    nb_stars_end -= 2;
                 }
                 else
                 {
-                    is_in_italic = 1;
-                    for (size_t i = 0; i < NB_C_ITALIC_START; i++)
-                    {
-                        html_buff[dest_buff_idx++] = elements[IDX_ITALIC][0][i];
-                    }
-                    // + bold
+                    // Bold end
                     if (nb_stars > 2)
                     {
-                        // End
-                        if (is_in_bold)
+                        for (size_t i = 0; i < NB_C_SPAN_CODE_END; i++)
                         {
-                            is_in_bold = 0;
-                            for (size_t i = 0; i < NB_C_SPAN_CODE_END; i++)
-                            {
-                                html_buff[dest_buff_idx++] =
-                                    elements[IDX_BOLD][1][i];
-                            }
+                            html_buff[html_idx++] = elements[IDX_BOLD][1][i];
                         }
-                        // Start
-                        else
-                        {
-                            is_in_bold = 1;
-                            for (size_t i = 0; i < NB_C_BOLD_START; i++)
-                            {
-                                html_buff[dest_buff_idx++] =
-                                    elements[IDX_BOLD][0][i];
-                            }
-                        }
+                        is_in_bold = 0;
+                        nb_stars_end -= 2;
                     }
+
+                    // Italic end
+                    for (size_t i = 0; i < NB_C_SPAN_CODE_END; i++)
+                    {
+                        html_buff[html_idx++] = elements[IDX_ITALIC][1][i];
+                    }
+                    is_in_italic = 0;
+                    nb_stars_end--;
                 }
             }
+            html_buff[html_idx++] = buff[i];
         }
         // Inline code
         else if (buff[i] == '`')
@@ -332,7 +288,7 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
         }
         else
         {
-            html_buff[dest_buff_idx++] = buff[i];
+            html_buff[html_idx++] = buff[i];
         }
         prev_c = buff[i];
     }
