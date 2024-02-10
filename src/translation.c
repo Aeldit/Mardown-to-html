@@ -144,13 +144,13 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
                                  + GET_NB_CHAR_FROM_DECOS(nb_deco) + BUFF_SIZE,
                              sizeof(char *));
 
-    for (size_t i = 0; i < BUFF_SIZE; i++)
+    for (size_t idx = 0; idx < BUFF_SIZE; idx++)
     {
         // TODO -> use a function that returns the current element
         //======================================================================
         // Headers
         //======================================================================
-        if (buff[i] == '#')
+        if (buff[idx] == '#')
         {
             // Start of a header
             if (prev_c == '\0' || prev_c == '\n' || h_level == -1)
@@ -164,36 +164,36 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
             }
         }
         // When the header stops
-        else if (h_level != -1 && buff[i] == ' ' && !is_in_header)
+        else if (h_level != -1 && buff[idx] == ' ' && !is_in_header)
         {
             is_in_header = 1;
             // Adds the '<hx>' element start to the dest_buff
-            for (int j = 0; j < NB_C_H_START; j++)
+            for (int i = 0; i < NB_C_H_START; i++)
             {
-                html_buff[html_idx++] = elements[h_level][0][j];
+                html_buff[html_idx++] = elements[h_level][0][i];
             }
         }
         else if (is_in_header)
         {
-            if (buff[i] == '\n')
+            if (buff[idx] == '\n')
             {
                 // Adds the '</hx>' element end to the dest_buff
-                for (int j = 0; j < NB_C_H_END; j++)
+                for (int i = 0; i < NB_C_H_END; i++)
                 {
-                    html_buff[html_idx++] = elements[h_level][1][j];
+                    html_buff[html_idx++] = elements[h_level][1][i];
                 }
                 h_level = -1;
                 is_in_header = 0;
             }
             else
             {
-                html_buff[html_idx++] = buff[i];
+                html_buff[html_idx++] = buff[idx];
             }
         }
         //======================================================================
         // Bold or italic
         //======================================================================
-        else if (buff[i] == '*')
+        else if (buff[idx] == '*')
         {
             nb_stars++;
         }
@@ -207,11 +207,11 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
             // Bold
             if (nb_stars % 2 == 0)
             {
-                is_in_bold = 1;
                 for (size_t i = 0; i < NB_C_BOLD_START; i++)
                 {
                     html_buff[html_idx++] = elements[IDX_BOLD][0][i];
                 }
+                is_in_bold = 1;
             }
             // Italic
             else
@@ -226,19 +226,22 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
                 {
                     for (size_t i = 0; i < NB_C_SPAN_CODE_END; i++)
                     {
-                        html_buff[html_idx++] = elements[IDX_BOLD][1][i];
+                        html_buff[html_idx++] = elements[IDX_BOLD][0][i];
                     }
                     is_in_bold = 1;
                 }
             }
             nb_stars_end = nb_stars;
             nb_stars = 0;
+            html_buff[html_idx++] = buff[idx];
         }
         // Writes the element end
         else if ((is_in_bold || is_in_italic) && nb_stars == 0)
         {
-            if (buff[i] == '*')
+            printf("%lu\n", nb_stars_end);
+            if (buff[idx] == '*')
             {
+                printf("aaaaa\n");
                 // Bold end
                 if (nb_stars_end % 2 == 0)
                 {
@@ -271,10 +274,13 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
                     nb_stars_end--;
                 }
             }
-            html_buff[html_idx++] = buff[i];
+            else
+            {
+                html_buff[html_idx++] = buff[idx];
+            }
         }
         // Inline code
-        else if (buff[i] == '`')
+        else if (buff[idx] == '`')
         {
             if (current_deco_type == TYPE_INLINE_CODE)
             {
@@ -288,9 +294,9 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
         }
         else
         {
-            html_buff[html_idx++] = buff[i];
+            html_buff[html_idx++] = buff[idx];
         }
-        prev_c = buff[i];
+        prev_c = buff[idx];
     }
     fprintf(out_f, html_buff, NULL);
     free(html_buff);
