@@ -12,21 +12,38 @@
 /*******************************************************************************
 **                              DEFINES / MACROS                              **
 *******************************************************************************/
-#define NB_CHAR_H_START 4
-#define NB_CHAR_H_END 5
-
 #define TYPE_NONE 0
 #define TYPE_BOLD 1
 #define TYPE_ITALIC 2
 #define TYPE_INLINE_CODE 3
 
-#define LEN_HEADER 9 // <hx></hx>
-#define LEN_BOLD 40 // <span style="font-weight: bold;"></span>
-#define LEN_ITALIC 41 // <span style="font-style: italic;"></span>
-// <code style="background-color: #444444; border-radius: 8px; padding:
-// 2px;"></code>
-#define LEN_INLINE_CODE 82
+//==============================================================================
+// Indexes in the elements array (in the source file)
+#define IDX_BOLD 6
+#define IDX_ITALIC 7
+#define IDX_INLINE_CODE 8
 
+//==============================================================================
+// Number of characters in each html element
+#define NB_C_H_START 4
+#define NB_C_H_END 5
+
+#define NB_C_BOLD_START 33
+#define NB_C_ITALIC_START 34
+#define NB_C_INLINE_CODE_START 75
+#define NB_C_SPAN_CODE_END 7
+
+//==============================================================================
+// Total length of each html element
+#define LEN_HEADER ((NB_C_H_START) + (NB_C_H_END)) // = 9
+#define LEN_BOLD ((NB_C_BOLD_START) + (NB_C_SPAN_CODE_END)) // = 40
+#define LEN_ITALIC ((NB_C_ITALIC_START) + (NB_C_SPAN_CODE_END)) // = 41
+// = 82
+#define LEN_INLINE_CODE ((NB_C_INLINE_CODE_START) + (NB_C_SPAN_CODE_END))
+
+//==============================================================================
+// MACROS
+//==============================================================================
 // 'elt' must be a member of the ELEMENTS enum
 #define IS_IN_HEADER(elt)                                                      \
     ((elt) == (H1) || (elt) == (H2) || (elt) == (H3) || (elt) == (H4)          \
