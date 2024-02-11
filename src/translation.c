@@ -193,7 +193,7 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
         //======================================================================
         // Bold or italic
         //======================================================================
-        else if (buff[idx] == '*')
+        else if (buff[idx] == '*' && !is_in_bold && !is_in_italic)
         {
             nb_stars++;
         }
@@ -236,9 +236,8 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
             html_buff[html_idx++] = buff[idx];
         }
         // Writes the element end
-        else if ((is_in_bold || is_in_italic) && nb_stars == 0)
+        else if ((is_in_bold || is_in_italic) && nb_stars_end != 0)
         {
-            printf("%lu\n", nb_stars_end);
             if (buff[idx] == '*')
             {
                 printf("aaaaa\n");
@@ -250,7 +249,7 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
                         html_buff[html_idx++] = elements[IDX_BOLD][1][i];
                     }
                     is_in_bold = 0;
-                    nb_stars_end -= 2;
+                    nb_stars_end = 0;
                 }
                 else
                 {
@@ -262,7 +261,6 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
                             html_buff[html_idx++] = elements[IDX_BOLD][1][i];
                         }
                         is_in_bold = 0;
-                        nb_stars_end -= 2;
                     }
 
                     // Italic end
@@ -271,7 +269,7 @@ void translate_write_to_html(char buff[BUFF_SIZE], enum ELEMENTS elt,
                         html_buff[html_idx++] = elements[IDX_ITALIC][1][i];
                     }
                     is_in_italic = 0;
-                    nb_stars_end--;
+                    nb_stars_end = 0;
                 }
             }
             else
