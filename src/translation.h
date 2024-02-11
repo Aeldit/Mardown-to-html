@@ -21,7 +21,8 @@
 // Indexes in the elements array (in the source file)
 #define IDX_BOLD 6
 #define IDX_ITALIC 7
-#define IDX_INLINE_CODE 8
+#define IDX_SPAN 8 // Index of the end element of span
+#define IDX_INLINE_CODE 9
 
 //==============================================================================
 // Number of characters in each html element
@@ -31,15 +32,15 @@
 #define NB_C_BOLD_START 33
 #define NB_C_ITALIC_START 34
 #define NB_C_INLINE_CODE_START 75
-#define NB_C_SPAN_CODE_END 7
+#define NB_C_SPAN_CODE 7 // The size of the ending element of the span and code
 
 //==============================================================================
 // Total length of each html element
 #define LEN_HEADER ((NB_C_H_START) + (NB_C_H_END)) // = 9
-#define LEN_BOLD ((NB_C_BOLD_START) + (NB_C_SPAN_CODE_END)) // = 40
-#define LEN_ITALIC ((NB_C_ITALIC_START) + (NB_C_SPAN_CODE_END)) // = 41
+#define LEN_BOLD ((NB_C_BOLD_START) + (NB_C_SPAN_CODE)) // = 40
+#define LEN_ITALIC ((NB_C_ITALIC_START) + (NB_C_SPAN_CODE)) // = 41
 // = 82
-#define LEN_INLINE_CODE ((NB_C_INLINE_CODE_START) + (NB_C_SPAN_CODE_END))
+#define LEN_INLINE_CODE ((NB_C_INLINE_CODE_START) + (NB_C_SPAN_CODE))
 
 //==============================================================================
 // MACROS
